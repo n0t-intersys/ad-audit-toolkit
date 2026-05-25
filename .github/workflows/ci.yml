@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  psscriptanalyzer:
+    name: PSScriptAnalyzer Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install PowerShell modules
+        shell: pwsh
+        run: |
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+          Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser -ErrorAction Stop
+          Write-Host "PSScriptAnalyzer $(Get-Module PSScriptAnalyzer -ListAvailable | Select-Object -First 1 -ExpandProperty Version) installed"
+
+      - name: Run PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          $results = Invoke-ScriptAnalyzer `
+            -Path ./scripts/ `
+            -Recurse `
+            -Severity Error, Warning `
+            -ExcludeRule PSAvoidUsingWriteHost, PSUseShouldProcessForStateChangingFunctions
+
+          if ($results) {
+            $results | Format-Table -Property ScriptName, Line, Severity, RuleName, Message -AutoSize
+            $errors = $results | Where-Object { $_.Severity -eq 'Error' }
+            if ($errors) {
+              Write-Error "PSScriptAnalyzer found $($errors.Count) error(s). Fix before merging."
+              exit 1
+            }
+            else {
+              Write-Warning "PSScriptAnalyzer found $($results.Count) warning(s) — review recommended."
+            }
+          }
+          else {
+            Write-Host "✅ PSScriptAnalyzer: no issues found." -ForegroundColor Green
+          }
+
+      - name: Validate script help blocks
+        shell: pwsh
+        run: |
+          $scripts = Get-ChildItem -Path ./scripts/ -Filter '*.ps1' -Recurse
+          $missing = @()
+          foreach ($script in $scripts) {
+            $help = Get-Help $script.FullName -ErrorAction SilentlyContinue
+            if (-not $help.Synopsis -or $help.Synopsis -eq '') {
+              $missing += $script.Name
+            }
+          }
+          if ($missing) {
+            Write-Warning "Scripts missing .SYNOPSIS: $($missing -join ', ')"
+          }
+          else {
+            Write-Host "✅ All scripts have comment-based help." -ForegroundColor Green
+          }
