@@ -12,7 +12,7 @@
 If you discover a security vulnerability in this project, please follow responsible disclosure:
 
 1. **Do NOT open a public GitHub issue** for security vulnerabilities.
-2. Email the maintainer directly at: **intersysclaude@gmail.com**
+2. Email the maintainer directly at: **contact@intersystechnology.com**
    - Subject: `[SECURITY] <repo-name> — Brief Description`
 3. Include:
    - A description of the vulnerability
