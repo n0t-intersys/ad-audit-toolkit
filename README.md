@@ -1,20 +1,13 @@
-# ad-audit-toolkit
-
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│  🛡  ACTIVE DIRECTORY SECURITY AUDIT TOOLKIT                             │
-│  Privileged Access · Kerberos · Password Policy · User & Computer Audit  │
-└─────────────────────────────────────────────────────────────────────────┘
-```
+# Active Directory Security Auditor
 
 [![CI](https://github.com/n0t-intersys/ad-audit-toolkit/actions/workflows/ci.yml/badge.svg)](https://github.com/n0t-intersys/ad-audit-toolkit/actions)
 [![PowerShell](https://img.shields.io/badge/PowerShell-7.x%20%7C%205.1-blue?logo=powershell)](https://microsoft.com/powershell)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 ![Auth Required](https://img.shields.io/badge/⚠_Authorization-Required-red)
 
-> **[READ LEGAL.md BEFORE USE](LEGAL.md)**
->
-> Run only on domains you own or have **explicit written authorization** to audit.
+Five PowerShell modules that cover the AD weaknesses I find most often — Kerberoastable accounts, AS-REP roasting exposure, shadow admins sitting outside privileged groups, password policies that don't meet CIS or NIST baselines, stale computer objects, and EOL operating systems still authenticating to the domain. Run `Invoke-ADAuditSuite.ps1` and it produces a full HTML report in one shot.
+
+> ⚠️ Run only on domains you own or have **explicit written authorization** to audit — see [LEGAL.md](LEGAL.md).
 
 ---
 
